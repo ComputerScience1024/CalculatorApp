@@ -10,9 +10,9 @@ class CalculatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Simple Calculator',
+      title: 'Crow Calculator',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
       home: const CalculatorHomePage(),
@@ -30,9 +30,8 @@ class CalculatorHomePage extends StatefulWidget {
 class _CalculatorHomePageState extends State<CalculatorHomePage> {
   String _display = '';
   String _input = '';
-  double? _firstOperand;
+  int? _firstOperand;
   String? _operator;
-  bool _isDecimalUsed = false;
 
   void _onButtonPressed(String value) {
     setState(() {
@@ -40,8 +39,6 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
         _clear();
       } else if (value == '+' || value == '-' || value == '×' || value == '÷') {
         _setOperator(value);
-      } else if (value == '.') {
-        _addDecimalPoint();
       } else if (value == '=') {
         _calculateResult();
       } else {
@@ -55,41 +52,28 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
     _input = '';
     _firstOperand = null;
     _operator = null;
-    _isDecimalUsed = false;
   }
 
   void _setOperator(String operator) {
     if (_input.isNotEmpty) {
-      _firstOperand = double.parse(_input);
+      _firstOperand = int.parse(_input);
       _operator = operator;
       _display = '$_input $operator ';
       _input = '';
-      _isDecimalUsed = false;
-    }
-  }
-
-  void _addDecimalPoint() {
-    if (!_isDecimalUsed) {
-      if (_input.isEmpty) {
-        _input = '0.';
-      } else {
-        _input += '.';
-      }
-      _isDecimalUsed = true;
     }
   }
 
   void _appendNumber(String number) {
     _input += number;
     _display = _firstOperand != null && _operator != null
-        ? '${_firstOperand!.toString()} $_operator $_input'
+        ? '${_firstOperand.toString()} $_operator $_input'
         : _input;
   }
 
   void _calculateResult() {
     if (_firstOperand != null && _operator != null && _input.isNotEmpty) {
-      double secondOperand = double.parse(_input);
-      double result;
+      int secondOperand = int.parse(_input);
+      int result;
 
       switch (_operator) {
         case '+':
@@ -107,10 +91,9 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
             _input = '';
             _firstOperand = null;
             _operator = null;
-            _isDecimalUsed = false;
             return;
           }
-          result = _firstOperand! / secondOperand;
+          result = _firstOperand! ~/ secondOperand; // Integer division
           break;
         default:
           return;
@@ -120,7 +103,6 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
       _input = result.toString();
       _firstOperand = null;
       _operator = null;
-      _isDecimalUsed = _input.contains('.');
     }
   }
 
@@ -147,7 +129,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Simple Calculator'),
+        title: const Text('Andres\'s Calculator'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Column(
@@ -191,14 +173,9 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
               Row(
                 children: [
                   _buildButton('0'),
-                  _buildButton('.'),
                   _buildButton('C', color: Colors.red),
-                  _buildButton('+', color: Colors.orange),
-                ],
-              ),
-              Row(
-                children: [
                   _buildButton('=', color: Colors.green),
+                  _buildButton('+', color: Colors.orange),
                 ],
               ),
             ],
