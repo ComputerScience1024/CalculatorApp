@@ -1,0 +1,10 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Ignore everything in CalculatorApp/
+CalculatorApp/*
+
+# But not the lib folder and its contents
+!calculatorapp/lib/
+!calculatorapp/lib/**

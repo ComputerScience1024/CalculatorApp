@@ -1,0 +1,6 @@
+# Ignore everything in CalculatorApp/
+calculatorapp/*
+
+# But not the lib folder and its contents
+!calculatorapp/lib/
+!calculatorapp/lib/**
