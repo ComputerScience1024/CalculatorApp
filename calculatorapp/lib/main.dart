@@ -37,7 +37,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
     setState(() {
       if (value == 'C') {
         _clear();
-      } else if (value == '+' || value == '-' || value == '×' || value == '÷') {
+      } else if (_isOperator(value)) {
         _setOperator(value);
       } else if (value == '=') {
         _calculateResult();
@@ -45,6 +45,10 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
         _appendNumber(value);
       }
     });
+  }
+
+  bool _isOperator(String value) {
+    return value == '+' || value == '-' || value == '×' || value == '÷';
   }
 
   void _clear() {
@@ -60,6 +64,9 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
       _operator = operator;
       _display = '$_input $operator ';
       _input = '';
+    } else if (_firstOperand != null) {
+      _operator = operator;
+      _display = '${_firstOperand.toString()} $operator ';
     }
   }
 
@@ -88,12 +95,21 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
         case '÷':
           if (secondOperand == 0) {
             _display = 'Error: Division by zero';
-            _input = '';
             _firstOperand = null;
             _operator = null;
+            _input = '';
             return;
           }
-          result = _firstOperand! ~/ secondOperand; // Integer division
+          // Check if division results in a decimal
+          double divisionResult = _firstOperand! / secondOperand;
+          if (divisionResult != divisionResult.toInt()) {
+            _display = 'Decimals not supported';
+            _firstOperand = null;
+            _operator = null;
+            _input = '';
+            return; // ❌ Removed `_clear()` to keep the message visible
+          }
+          result = _firstOperand! ~/ secondOperand;
           break;
         default:
           return;
