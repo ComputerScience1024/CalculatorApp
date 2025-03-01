@@ -32,6 +32,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
   String _input = '';
   int? _firstOperand;
   String? _operator;
+  bool _newInput = false; // Tracks if a new calculation should start
 
   void _onButtonPressed(String value) {
     setState(() {
@@ -56,6 +57,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
     _input = '';
     _firstOperand = null;
     _operator = null;
+    _newInput = false;
   }
 
   void _setOperator(String operator) {
@@ -64,6 +66,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
       _operator = operator;
       _display = '$_input $operator ';
       _input = '';
+      _newInput = false;
     } else if (_firstOperand != null) {
       _operator = operator;
       _display = '${_firstOperand.toString()} $operator ';
@@ -71,7 +74,12 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
   }
 
   void _appendNumber(String number) {
-    _input += number;
+    if (_newInput) {
+      _input = number; // Start fresh if a new calculation begins
+      _newInput = false;
+    } else {
+      _input += number;
+    }
     _display = _firstOperand != null && _operator != null
         ? '${_firstOperand.toString()} $_operator $_input'
         : _input;
@@ -100,14 +108,13 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
             _input = '';
             return;
           }
-          // Check if division results in a decimal
           double divisionResult = _firstOperand! / secondOperand;
           if (divisionResult != divisionResult.toInt()) {
             _display = 'Decimals not supported';
             _firstOperand = null;
             _operator = null;
             _input = '';
-            return; // ❌ Removed `_clear()` to keep the message visible
+            return;
           }
           result = _firstOperand! ~/ secondOperand;
           break;
@@ -119,6 +126,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
       _input = result.toString();
       _firstOperand = null;
       _operator = null;
+      _newInput = true; // Mark new calculation start
     }
   }
 
